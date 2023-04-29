@@ -35,6 +35,7 @@ const getReturnedParamsFromSpotifyAuth = (hash) => {
 };
 
 const WebApp = () => {
+  const [login, setlogin] = useState(false);
   useEffect(() => {
     if (window.location.hash) {
       const { access_token, expires_in, token_type, id } =
@@ -47,42 +48,42 @@ const WebApp = () => {
       localStorage.setItem("expiresIn", expires_in);
       setlogin(true);
     }
-  });
+  }, []);
 
   const handleLogin = () => {
     window.location = `${SPOTIFY_AUTHORIZE_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URL_AFTER_LOGIN}&scope=${SCOPES_URL_PARAM}&response_type=token&show_dialog=true`;
   };
 
-  const logout = () => {
-    localStorage.clear();
-    setlogin(false);
-  };
-
-  const [login, setlogin] = useState(false);
+  // const logout = () => {
+  //   console.log("logout");
+  //   localStorage.clear();
+  //   setlogin(false);
+  // };
 
   return (
-    <div className="App">
+    <div>
       {login ? (
-        <div style={{ backgroundColor: "#034343" }}>
-          {/* <Link to="/main">
-            <li>Main</li>
-          </Link> */}
-          <button onClick={logout}>Log out</button>
+        <div className="Main">
+          {/* <button className="logout" onClick={logout}>
+            Log out
+          </button> */}
           <Main />
         </div>
       ) : (
         <div className="Logo">
-          <h1>My.</h1>
-          <br />
-          <h1>Generator</h1>
-          <p>
-            Analyse your music and give recommendations
-            <br /> based on selected characteristics
-          </p>
+          <div>
+            <h1>My.</h1>
+            <br />
+            <h1>Generator</h1>
+            <p>
+              Analyse your music and give recommendations
+              <br /> based on selected characteristics
+            </p>
 
-          <button className="Login" onClick={handleLogin}>
-            login to spotify
-          </button>
+            <button className="Login" onClick={handleLogin}>
+              login to spotify
+            </button>
+          </div>
         </div>
       )}
     </div>
