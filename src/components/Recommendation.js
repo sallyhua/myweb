@@ -54,19 +54,24 @@ const Recommendation = () => {
       style={{
         position: "absolute",
         width: "100%",
-        height: "max-content",
+        minHeight: "100%",
         paddingLeft: "20px",
         paddingBottom: "50px",
         backgroundColor: "#d1dbd5",
       }}
     >
-      <h1
-        style={{
-          color: "#034343",
-        }}
-      >
-        Recommendations
-      </h1>
+      <div className="inLine">
+        <h1
+          style={{
+            color: "#034343",
+          }}
+        >
+          Recommendations
+        </h1>
+        <button onClick={handleRecommendation} style={{ width: "200px" }}>
+          Get Recommendations
+        </button>
+      </div>
       {recommendations?.data ? (
         <div className="MusicDisplay">
           {recommendations.data.tracks.map((track, index) => (
@@ -104,7 +109,7 @@ const Recommendation = () => {
           Again
         </button>
         <button style={{ width: "100px", height: "50px", marginLeft: "5%" }}>
-          <a href="/">Back</a>
+          <a href="/main">Back</a>
         </button>
       </div>
     </div>

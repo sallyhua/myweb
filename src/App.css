@@ -14,10 +14,11 @@ body {
 }
 
 .Main {
-  position: relative;
+  position: absolute;
   background-color: #d1dbd5;
   padding-bottom: 100px;
   width: 100%;
+  min-height: 100%;
   /* width: max-content; */
 }
 
@@ -230,4 +231,10 @@ button:hover {
   grid-template-columns: repeat(2, auto);
   width: 245px;
   align-items: center;
+}
+
+.Recommendation {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  row-gap: 10px;
 }

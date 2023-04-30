@@ -4,12 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import play from "../icons/playIcon.png";
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// loading top 20 auto
 // save selected values
-// add loading text
-// pop-up window for empty selection
 // description of table elements
-// display multiply artists
+// add search function
+// next page function
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 const TOP_ENDPOINT = "https://api.spotify.com/v1/me/top/tracks";
@@ -21,17 +19,17 @@ const Main = () => {
   const [compareTrack, setCompareTrack] = useState([]);
   const [checkedState, setCheckedState] = useState(new Array(20).fill(false)); // For top 20 songs selections
   const [clickState, setClickState] = useState(new Array(20).fill(false)); // For recommendation cell selections
-  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
+    setDone(false);
     if (localStorage.getItem("accessToken")) {
       setToken(localStorage.getItem("accessToken"));
       handleGetTop();
     }
+    setDone(true);
   }, [token]);
-  const loadData = async () => {
-    await handleGetTop();
-  };
 
   // componentDidMount(() => {
   //   setTimeout(() => {
@@ -60,10 +58,15 @@ const Main = () => {
 
   // clear compare parameters after submitted selected songs
   const handleSubmit = async (event) => {
-    setCompareArtist([]);
-    setCompareTrack([]);
-    setCheckedState(new Array(20).fill(false));
-    event.preventDefault();
+    if (compareTrack.length < 2) {
+      alert("Please select two songs");
+      event.preventDefault();
+    } else {
+      setCompareArtist([]);
+      setCompareTrack([]);
+      setCheckedState(new Array(20).fill(false));
+      event.preventDefault();
+    }
   };
 
   // store selected songs when user clicking on the checkbox
@@ -108,9 +111,11 @@ const Main = () => {
   return (
     <div
       style={{
+        position: "absolute",
         paddingLeft: "20px",
         paddingTop: "20px",
         width: "100%",
+        minHeight: "100%",
         backgroundColor: "#d1dbd5",
       }}
     >
@@ -126,64 +131,68 @@ const Main = () => {
         </div>
 
         <p style={{ color: "#034343" }}>· Pick any two music to compare</p>
-        <form onSubmit={handleSubmit}>
-          {tops?.items ? (
-            <div className="MusicDisplay">
-              {tops.items.map((top, index) => (
-                <div className="MusicContainer">
-                  <div className="Image">
-                    <input
-                      type="checkbox"
-                      id={`custom-checkbox-${index}`}
-                      value={[top.artists[0].id, top.id]}
-                      checked={checkedState[index]}
-                      onChange={(e) => handleChange(index, e)}
-                      disabled={
-                        checkedState[index] === false &&
-                        checkedState.filter((i) => i).length >= 2
-                          ? "disabled"
-                          : null
-                      }
-                    />
+        {done ? (
+          <form onSubmit={handleSubmit}>
+            {tops?.items ? (
+              <div className="MusicDisplay">
+                {tops.items.map((top, index) => (
+                  <div className="MusicContainer">
+                    <div className="Image">
+                      <input
+                        type="checkbox"
+                        id={`custom-checkbox-${index}`}
+                        value={[top.artists[0].id, top.id]}
+                        checked={checkedState[index]}
+                        onChange={(e) => handleChange(index, e)}
+                        disabled={
+                          checkedState[index] === false &&
+                          checkedState.filter((i) => i).length >= 2
+                            ? "disabled"
+                            : null
+                        }
+                      />
 
-                    <img
-                      src={top.album.images[0].url}
-                      alt="cover"
-                      width="200px"
-                      height="200px"
-                    />
+                      <img
+                        src={top.album.images[0].url}
+                        alt="cover"
+                        width="200px"
+                        height="200px"
+                      />
+                    </div>
+                    {/* {console.log(top.album.artists[0].name)} */}
+                    <div className="Music">
+                      <p>
+                        {top.album.artists[0].name}
+                        <br />
+                        {top.name}
+                      </p>
+                      <Link to={top.external_urls.spotify} target="_blank">
+                        <div className="playIcon">
+                          <img src={play} alt="play" />
+                        </div>
+                      </Link>
+                    </div>
                   </div>
-                  {/* {console.log(top.album.artists[0].name)} */}
-                  <div className="Music">
-                    <p>
-                      {top.album.artists[0].name}
-                      <br />
-                      {top.name}
-                    </p>
-                    <Link to={top.external_urls.spotify} target="_blank">
-                      <div className="playIcon">
-                        <img src={play} alt="play" />
-                      </div>
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : null}
+                ))}
+              </div>
+            ) : null}
 
-          <button
-            onClick={handleSubmit}
-            to="/compare"
-            style={{ marginTop: "10px" }}
-          >
-            <Link
-              to="/compare"
-              state={{ compare: { compareArtist, compareTrack } }}
-            >
-              submit
-            </Link>
-          </button>
-        </form>
+            <button onClick={handleSubmit} style={{ marginTop: "10px" }}>
+              {compareTrack.length < 2 ? (
+                "submit"
+              ) : (
+                <Link
+                  to="/compare"
+                  state={{ compare: { compareArtist, compareTrack } }}
+                >
+                  submit
+                </Link>
+              )}
+            </button>
+          </form>
+        ) : (
+          <p>Loading ... </p>
+        )}
       </div>
     </div>
   );
