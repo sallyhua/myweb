@@ -1,25 +1,28 @@
-import React, { useEffect, useState, componentDidMount } from "react";
-import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+// import axios from "axios";
+import { Link } from "react-router-dom";
+import { InputGroup, FormControl } from "react-bootstrap";
 import play from "../icons/playIcon.png";
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // save selected values
 // description of table elements
-// add search function
 // next page function
+// flexible grid
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-const TOP_ENDPOINT = "https://api.spotify.com/v1/me/top/tracks";
+const TOP_ENDPOINT = "https://api.spotify.com/v1/me/top/tracks?";
+const SEARCH_ENDPOINT = "https://api.spotify.com/v1/search?q=";
 
 const Main = () => {
   const [token, setToken] = useState("");
   const [tops, setTop] = useState({});
   const [compareArtist, setCompareArtist] = useState([]);
   const [compareTrack, setCompareTrack] = useState([]);
-  const [checkedState, setCheckedState] = useState(new Array(20).fill(false)); // For top 20 songs selections
-  const [clickState, setClickState] = useState(new Array(20).fill(false)); // For recommendation cell selections
-
+  const [checkedState, setCheckedState] = useState(new Array(20).fill(false));
+  const [checkedSearch, setCheckedSearch] = useState([false, false]);
+  const [searchInput, setSearchInput] = useState({});
+  const [search, setSearch] = useState([]);
   const [done, setDone] = useState(false);
 
   useEffect(() => {
@@ -38,23 +41,51 @@ const Main = () => {
   // });
 
   const handleGetTop = async () => {
-    await axios
-      .get(TOP_ENDPOINT, {
-        headers: {
-          Authorization: "Bearer " + token,
-          // "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        setTop(response.data);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log("Get top error - " + error);
-      });
+    // await axios
+    //   .get(TOP_ENDPOINT, {
+    //     headers: {
+    //       Authorization: "Bearer " + token,
+    //       // "Content-Type": "application/json",
+    //     },
+    //   })
+    //   .then((response) => {
+    //     setTop(response.data);
+    //     console.log(response.data);
+    //   })
+    //   .catch((error) => {
+    //     console.log("Get top error - " + error);
+    //   });
+    var topParams = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+    };
+    {
+      console.log("top");
+    }
+    await fetch(TOP_ENDPOINT, topParams)
+      .then((response) => response.json())
+      .then((data) => setTop(data));
   };
 
-  // const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const handleSearch = async () => {
+    console.log("search");
+    var artistParams = {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+    };
+    var artistID = await fetch(
+      SEARCH_ENDPOINT + searchInput + "&type=track",
+      artistParams
+    )
+      .then((response) => response.json())
+      .then((data) => setSearch(data));
+  };
 
   // clear compare parameters after submitted selected songs
   const handleSubmit = async (event) => {
@@ -71,15 +102,16 @@ const Main = () => {
 
   // store selected songs when user clicking on the checkbox
   const handleChange = (position, event) => {
-    if (checkedState.filter((i) => i).length >= 2 && event.target.checked)
-      return;
-    const updatedCheckedState = checkedState.map((item, index) =>
-      index === position ? !item : item
-    );
+    // if (checkedState.filter((i) => i).length >= 2 && event.target.checked)
+    //   return;
+    // const updatedCheckedState = checkedState.map((item, index) =>
+    //   index === position ? !item : item
+    // );
 
-    setCheckedState(updatedCheckedState);
-
+    // setCheckedState(updatedCheckedState);
+    // console.log(event.target.checked);
     if (event.target.checked) {
+      console.log("add");
       setCompareArtist((prevState) => [
         ...prevState,
         event.target.value.split(",")[0],
@@ -89,6 +121,7 @@ const Main = () => {
         event.target.value.split(",")[1],
       ]);
     } else {
+      console.log("remove");
       setCompareArtist(
         compareArtist.filter(
           (compare) => compare !== event.target.value.split(",")[0]
@@ -100,6 +133,7 @@ const Main = () => {
         )
       );
     }
+    console.log(compareArtist);
   };
 
   const logout = () => {
@@ -132,64 +166,151 @@ const Main = () => {
 
         <p style={{ color: "#034343" }}>· Pick any two music to compare</p>
         {done ? (
-          <form onSubmit={handleSubmit}>
-            {tops?.items ? (
-              <div className="MusicDisplay">
-                {tops.items.map((top, index) => (
-                  <div className="MusicContainer">
-                    <div className="Image">
-                      <input
-                        type="checkbox"
-                        id={`custom-checkbox-${index}`}
-                        value={[top.artists[0].id, top.id]}
-                        checked={checkedState[index]}
-                        onChange={(e) => handleChange(index, e)}
-                        disabled={
-                          checkedState[index] === false &&
-                          checkedState.filter((i) => i).length >= 2
-                            ? "disabled"
-                            : null
-                        }
-                      />
+          <div className="inLine" style={{ alignItems: "start" }}>
+            <form onSubmit={handleSubmit} style={{ flex: "3" }}>
+              {tops?.items ? (
+                <div className="MusicDisplay">
+                  {tops.items.map((top, index) => (
+                    <div className="MusicContainer">
+                      <div className="Image">
+                        <input
+                          type="checkbox"
+                          // id={`custom-checkbox-${index}`}
+                          value={[top.artists[0].id, top.id]}
+                          // checked={checkedState[index]}
+                          checked={
+                            compareTrack.indexOf(search.id) > -1 ? true : null
+                          }
+                          onChange={(e) => handleChange(index, e)}
+                          // disabled={
+                          //   checkedState[index] === false &&
+                          //   checkedState.filter((i) => i).length >= 2
+                          //     ? "disabled"
+                          //     : null
+                          // }
+                          disabled={
+                            compareTrack.indexOf(top.id) <= -1 &&
+                            compareTrack.length >= 2
+                              ? "disabled"
+                              : null
+                          }
+                        />
 
-                      <img
-                        src={top.album.images[0].url}
-                        alt="cover"
-                        width="200px"
-                        height="200px"
-                      />
+                        <img
+                          src={top.album.images[0].url}
+                          alt="cover"
+                          width="200px"
+                          height="200px"
+                        />
+                      </div>
+                      {/* {console.log(top.album.artists[0].name)} */}
+                      <div className="Music">
+                        <p>
+                          {top.album.artists[0].name}
+                          <br />
+                          {top.name}
+                        </p>
+                        <Link to={top.external_urls.spotify} target="_blank">
+                          <div className="playIcon">
+                            <img src={play} alt="play" />
+                          </div>
+                        </Link>
+                      </div>
                     </div>
-                    {/* {console.log(top.album.artists[0].name)} */}
-                    <div className="Music">
-                      <p>
-                        {top.album.artists[0].name}
-                        <br />
-                        {top.name}
-                      </p>
-                      <Link to={top.external_urls.spotify} target="_blank">
-                        <div className="playIcon">
-                          <img src={play} alt="play" />
-                        </div>
-                      </Link>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+              ) : null}
+
+              <button onClick={handleSubmit} style={{ marginTop: "10px" }}>
+                {compareTrack.length < 2 ? (
+                  "submit"
+                ) : (
+                  <Link
+                    to="/compare"
+                    state={{ compare: { compareArtist, compareTrack } }}
+                  >
+                    submit
+                  </Link>
+                )}
+              </button>
+            </form>
+            <div className="SearchContainer" style={{ flex: "2" }}>
+              <div className="inLine">
+                <InputGroup>
+                  <FormControl
+                    placeholder="Search For Artist"
+                    type="input"
+                    onKeyDown={(event) => {
+                      if (event.key == "Enter") {
+                        handleSearch();
+                      }
+                    }}
+                    onChange={(event) => {
+                      setSearchInput(event.target.value);
+                    }}
+                  />
+                </InputGroup>
+                <button onClick={handleSearch}>search</button>
               </div>
-            ) : null}
-
-            <button onClick={handleSubmit} style={{ marginTop: "10px" }}>
-              {compareTrack.length < 2 ? (
-                "submit"
-              ) : (
-                <Link
-                  to="/compare"
-                  state={{ compare: { compareArtist, compareTrack } }}
+              {searchInput.length > 0 ? (
+                <div
+                  className="MusicDisplay"
+                  style={{ gridTemplateColumns: "repeat(2, auto)" }}
                 >
-                  submit
-                </Link>
+                  {search?.tracks
+                    ? search.tracks.items.map((search, index) => (
+                        <div className="MusicContainer">
+                          <div className="Image">
+                            <input
+                              type="checkbox"
+                              // id={`custom-checkbox-${index}`}
+                              value={[search.artists[0].id, search.id]}
+                              checked={
+                                compareTrack.indexOf(search.id) > -1
+                                  ? true
+                                  : null
+                              }
+                              onChange={(e) => handleChange(index, e)}
+                              disabled={
+                                compareTrack.indexOf(search.id) <= -1 &&
+                                compareTrack.length >= 2
+                                  ? "disabled"
+                                  : null
+                              }
+                            />
+                            {/* {console.log(compareTrack)} */}
+
+                            <img
+                              src={search.album.images[0].url}
+                              alt="cover"
+                              width="200px"
+                              height="200px"
+                            />
+                          </div>
+                          <div className="Music">
+                            <p>
+                              {search.album.artists[0].name}
+                              <br />
+                              {search.name}
+                            </p>
+                            <Link
+                              to={search.external_urls.spotify}
+                              target="_blank"
+                            >
+                              <div className="playIcon">
+                                <img src={play} alt="play" />
+                              </div>
+                            </Link>
+                          </div>
+                        </div>
+                      ))
+                    : null}
+                </div>
+              ) : (
+                <p>null</p>
               )}
-            </button>
-          </form>
+            </div>
+          </div>
         ) : (
           <p>Loading ... </p>
         )}

@@ -11,7 +11,7 @@ const Recommendation = () => {
   const location = useLocation();
   const [recommendations, setRecommendations] = useState({});
   const [select, setSelect] = useState({});
-  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  // const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   useEffect(() => {
     if (localStorage.getItem("accessToken")) {
       setToken(localStorage.getItem("accessToken"));
@@ -23,7 +23,7 @@ const Recommendation = () => {
   const handleRecommendation = () => {
     console.log(select);
     axios
-      .get("https://api.spotify.com/v1/recommendations", {
+      .get(RECOMMENDATION_ENDPOINT, {
         headers: {
           Authorization: "Bearer  " + token,
           "Content-Type": "application/json",
@@ -73,7 +73,7 @@ const Recommendation = () => {
         </button>
       </div>
       {recommendations?.data ? (
-        <div className="MusicDisplay">
+        <div className="Recommendation">
           {recommendations.data.tracks.map((track, index) => (
             <div className="MusicContainer">
               <div>
