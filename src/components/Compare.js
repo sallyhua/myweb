@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../App.css";
 import { useLocation, Link } from "react-router-dom";
-import Recommendation from "./Recommendation";
+import { validGenres } from "./ValidGenres.js";
 
 const GET_ARTIST_ENDPOINT = "https://api.spotify.com/v1/artists/";
 const GET_TRACK_ENDPOINT = "https://api.spotify.com/v1/tracks/";
@@ -24,6 +24,8 @@ const cellNum = {
   11: "target_key",
   12: "target_time_signature",
   13: "target_time_signature",
+  14: "seed_tracks",
+  15: "seed_tracks",
 };
 
 const Compare = () => {
@@ -47,8 +49,8 @@ const Compare = () => {
     target_tempo: null,
     target_key: null,
     target_time_signature: null,
+    seed_tracks: null,
   });
-  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   useEffect(() => {
     setDone(false);
@@ -59,7 +61,6 @@ const Compare = () => {
     setCompareTrack(location.state.compare.compareTrack);
     submitCompare();
     setDone(true);
-    console.log(done);
   }, [compareArtist, compareTrack, done]);
 
   const handleGetArtist = async (id) => {
@@ -72,8 +73,6 @@ const Compare = () => {
       })
       .then((response) => {
         setArtist((prevState) => [...prevState, response.data]);
-        console.log("artist: " + artist);
-        console.log(artist);
       })
       .catch((error) => {
         console.log("Get artist error - " + error);
@@ -90,8 +89,6 @@ const Compare = () => {
       })
       .then((response) => {
         setTrack((prevState) => [...prevState, response.data]);
-        console.log("track: " + track);
-        console.log(track);
       })
       .catch((error) => {
         console.log("Get track error - " + error);
@@ -144,12 +141,58 @@ const Compare = () => {
       setClickState(updatedClickState);
     }
 
+    const checkValid = (genres) => {
+      let genreList = [];
+      let checkedGenres = [];
+      genreList = genres.split(",");
+      {
+        genreList.map((genre) => {
+          if (validGenres.indexOf(genre) > -1) {
+            console.log("return");
+            checkedGenres = [1];
+            return genres;
+          }
+        });
+      }
+      if (checkedGenres.length === 0) {
+        genreList = genres.replaceAll(",", " ").split(" ");
+        {
+          genreList.map((genre) => {
+            if (validGenres.indexOf(genre) > -1) {
+              checkedGenres.push(genre);
+              console.log(checkedGenres);
+            }
+          });
+        }
+        if (checkedGenres.length > 3) {
+          return checkedGenres.slice(0, 3);
+        }
+        return checkedGenres;
+      }
+      return genres;
+    };
+
     const cell = cellNum[position];
     if (!clickState[position]) {
-      if (position === 0 || position === 1) {
+      if (cell === "seed_artists") {
         setSelect((prevState) => ({
           ...prevState,
           [cell]: artist[position].id,
+        }));
+      } else if (position === 14 || position === 15) {
+        setSelect((prevState) => ({
+          ...prevState,
+          [cell]: track[position - 14].id,
+        }));
+      } else if (cell === "seed_genres") {
+        let genre = document
+          .getElementById(position)
+          .innerHTML.replaceAll("<p>", "")
+          .replaceAll("</p>", ",");
+        genre = checkValid(genre).toString();
+        setSelect((prevState) => ({
+          ...prevState,
+          [cell]: genre,
         }));
       } else {
         setSelect((prevState) => ({
@@ -183,7 +226,6 @@ const Compare = () => {
       setClickState(new Array(20).fill(false));
     }
   };
-  const [style, setStyle] = useState({ display: "none" });
 
   return (
     <div>
@@ -192,16 +234,31 @@ const Compare = () => {
           <table>
             <tr>
               <th>#</th>
+              <th>Element description</th>
               <th>Song 1</th>
               <th>Song 2</th>
             </tr>
             <tr>
               <td>Song name</td>
-              <td>{track[0]?.name ? track[0].name : null}</td>
-              <td>{track[1]?.name ? track[1].name : null}</td>
+              <td>#</td>
+              <td
+                onClick={() => clickCell(14)}
+                style={{ backgroundColor: clickState[14] ? selectedColor : "" }}
+                id="14"
+              >
+                {track[0]?.name ? track[0].name : null}
+              </td>
+              <td
+                onClick={() => clickCell(15)}
+                style={{ backgroundColor: clickState[15] ? selectedColor : "" }}
+                id="15"
+              >
+                {track[1]?.name ? track[1].name : null}
+              </td>
             </tr>
             <tr>
               <td>Artists</td>
+              <td></td>
               <td
                 onClick={() => clickCell(0)}
                 style={{ backgroundColor: clickState[0] ? selectedColor : "" }}
@@ -219,6 +276,7 @@ const Compare = () => {
             </tr>
             <tr>
               <td>Genres</td>
+              <td></td>
               <td
                 onClick={() => clickCell(2)}
                 style={{ backgroundColor: clickState[2] ? selectedColor : "" }}
@@ -240,6 +298,7 @@ const Compare = () => {
             </tr>
             <tr>
               <td>Loudness</td>
+              <td></td>
               <td
                 onClick={() => clickCell(4)}
                 style={{ backgroundColor: clickState[4] ? selectedColor : "" }}
@@ -261,6 +320,7 @@ const Compare = () => {
             </tr>
             <tr>
               <td>Popularity</td>
+              <td></td>
               <td
                 onClick={() => clickCell(6)}
                 style={{ backgroundColor: clickState[6] ? selectedColor : "" }}
@@ -278,6 +338,7 @@ const Compare = () => {
             </tr>
             <tr>
               <td>Tempo</td>
+              <td></td>
               <td
                 onClick={() => clickCell(8)}
                 style={{ backgroundColor: clickState[8] ? selectedColor : "" }}
@@ -295,6 +356,7 @@ const Compare = () => {
             </tr>
             <tr>
               <td>Key</td>
+              <td></td>
               <td
                 onClick={() => clickCell(10)}
                 style={{ backgroundColor: clickState[10] ? selectedColor : "" }}
@@ -312,6 +374,7 @@ const Compare = () => {
             </tr>
             <tr>
               <td>Time signature</td>
+              <td></td>
               <td
                 onClick={() => clickCell(12)}
                 style={{ backgroundColor: clickState[12] ? selectedColor : "" }}
@@ -332,21 +395,30 @@ const Compare = () => {
               </td>
             </tr>
           </table>
-          <button
-            onClick={handleRecommendation}
-            style={{ marginTop: "30px", width: "200px", marginLeft: "2%" }}
-          >
-            {clickState.every((current) => current === false) ? (
-              "Get Recommendations"
-            ) : (
-              <Link to="/recommendation" state={{ recommendation: { select } }}>
-                Get Recommendations
-              </Link>
-            )}
-          </button>
-          <button style={{ width: "100px", height: "50px", marginLeft: "5%" }}>
-            <a href="/main">Back</a>
-          </button>
+          <div className="inLine">
+            <button onClick={handleRecommendation} style={{ width: "200px" }}>
+              {clickState.every((current) => current === false) ? (
+                "Get Recommendations"
+              ) : (
+                <Link
+                  to="/recommendation"
+                  state={{ recommendation: { select } }}
+                >
+                  Get Recommendations
+                </Link>
+              )}
+            </button>
+            <button
+              style={{
+                width: "100px",
+                height: "50px",
+                marginLeft: "auto",
+                marginRight: 0,
+              }}
+            >
+              <a href="/main">Back</a>
+            </button>
+          </div>
         </div>
       ) : (
         <p>Loading</p>

@@ -8,7 +8,6 @@ import play from "../icons/playIcon.png";
 // save selected values
 // description of table elements
 // next page function
-// flexible grid
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 const TOP_ENDPOINT = "https://api.spotify.com/v1/me/top/tracks?";
@@ -34,27 +33,7 @@ const Main = () => {
     setDone(true);
   }, [token]);
 
-  // componentDidMount(() => {
-  //   setTimeout(() => {
-  //     handleGetTop();
-  //   }, 2000);
-  // });
-
   const handleGetTop = async () => {
-    // await axios
-    //   .get(TOP_ENDPOINT, {
-    //     headers: {
-    //       Authorization: "Bearer " + token,
-    //       // "Content-Type": "application/json",
-    //     },
-    //   })
-    //   .then((response) => {
-    //     setTop(response.data);
-    //     console.log(response.data);
-    //   })
-    //   .catch((error) => {
-    //     console.log("Get top error - " + error);
-    //   });
     var topParams = {
       method: "GET",
       headers: {
@@ -153,7 +132,7 @@ const Main = () => {
         backgroundColor: "#d1dbd5",
       }}
     >
-      <div className="App">
+      <div className="App" style={{ marginBottom: "50px" }}>
         {/* <button onClick={handleGetPlaylists}>Get Playlists</button>
         {data?.items ? data.items.map((item) => <p>{item.name}</p>) : null} */}
         <div className="inLine">
@@ -182,12 +161,6 @@ const Main = () => {
                             compareTrack.indexOf(search.id) > -1 ? true : null
                           }
                           onChange={(e) => handleChange(index, e)}
-                          // disabled={
-                          //   checkedState[index] === false &&
-                          //   checkedState.filter((i) => i).length >= 2
-                          //     ? "disabled"
-                          //     : null
-                          // }
                           disabled={
                             compareTrack.indexOf(top.id) <= -1 &&
                             compareTrack.length >= 2
@@ -203,7 +176,6 @@ const Main = () => {
                           height="200px"
                         />
                       </div>
-                      {/* {console.log(top.album.artists[0].name)} */}
                       <div className="Music">
                         <p>
                           {top.album.artists[0].name}
@@ -238,6 +210,7 @@ const Main = () => {
               <div className="inLine">
                 <InputGroup>
                   <FormControl
+                    className="SearchBar"
                     placeholder="Search For Artist"
                     type="input"
                     onKeyDown={(event) => {
@@ -307,7 +280,7 @@ const Main = () => {
                     : null}
                 </div>
               ) : (
-                <p>null</p>
+                <p style={{ color: "#034343" }}>Search for more music</p>
               )}
             </div>
           </div>

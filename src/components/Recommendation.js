@@ -3,7 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
 import play from "../icons/playIcon.png";
 
-const RECOMMENDATION_ENDPOINT = "https://api.spotify.com/v1/recommendations";
+const RECOMMENDATION_ENDPOINT = "https://api.spotify.com/v1/recommendations?";
 // const token = localStorage.getItem("accessToken");
 
 const Recommendation = () => {
@@ -29,6 +29,7 @@ const Recommendation = () => {
           "Content-Type": "application/json",
         },
         params: {
+          seed_tracks: select.seed_tracks,
           seed_artists: select.seed_artists,
           seed_genres: select.seed_genres,
           target_loudness: select.target_loudness,
@@ -50,7 +51,6 @@ const Recommendation = () => {
 
   return (
     <div
-      // className="App"
       style={{
         position: "absolute",
         width: "100%",
