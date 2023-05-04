@@ -77,6 +77,7 @@ const Compare = () => {
       .catch((error) => {
         console.log("Get artist error - " + error);
       });
+    console.log(artist);
   };
 
   const handleGetTrack = async (id) => {
@@ -93,6 +94,7 @@ const Compare = () => {
       .catch((error) => {
         console.log("Get track error - " + error);
       });
+    console.log(track);
   };
 
   const handleAudioAnalysis = async (id) => {
@@ -118,7 +120,7 @@ const Compare = () => {
   };
 
   const clickCell = (position) => {
-    if (document.getElementById(position).innerText === "") {
+    if (document.getElementById(position).innerText === "No valid value") {
       return null;
     }
     if (
@@ -209,9 +211,6 @@ const Compare = () => {
         [cell]: null,
       }));
     }
-
-    // console.log(clickState);
-    // console.log(select);
   };
 
   const handleRecommendation = (e) => {
@@ -231,16 +230,25 @@ const Compare = () => {
     <div>
       {done ? (
         <div className="Compare">
+          <p
+            style={{
+              color: "#034343",
+              height: "10px",
+              fontWeight: "bold",
+            }}
+          >
+            Please select preferred recommendation parameters
+          </p>
           <table>
             <tr>
               <th>#</th>
-              <th>Element description</th>
+              <th style={{ width: "400px" }}>Element description</th>
               <th>Song 1</th>
               <th>Song 2</th>
             </tr>
             <tr>
               <td>Song name</td>
-              <td>#</td>
+              <td>Recommend music according to the selected track</td>
               <td
                 onClick={() => clickCell(14)}
                 style={{ backgroundColor: clickState[14] ? selectedColor : "" }}
@@ -258,7 +266,7 @@ const Compare = () => {
             </tr>
             <tr>
               <td>Artists</td>
-              <td></td>
+              <td>Recommend music according to the selected artist</td>
               <td
                 onClick={() => clickCell(0)}
                 style={{ backgroundColor: clickState[0] ? selectedColor : "" }}
@@ -276,29 +284,37 @@ const Compare = () => {
             </tr>
             <tr>
               <td>Genres</td>
-              <td></td>
+              <td>Recommend music according to the selected genres</td>
               <td
                 onClick={() => clickCell(2)}
                 style={{ backgroundColor: clickState[2] ? selectedColor : "" }}
                 id="2"
               >
-                {artist[0]?.genres
-                  ? artist[0].genres.map((a) => <p>{a}</p>)
-                  : null}
+                {artist[0]?.genres && artist[0].genres.length > 0 ? (
+                  artist[0].genres.map((a) => <p>{a}</p>)
+                ) : (
+                  <p>No valid value</p>
+                )}
               </td>
               <td
                 onClick={() => clickCell(3)}
                 style={{ backgroundColor: clickState[3] ? selectedColor : "" }}
                 id="3"
               >
-                {artist[1]?.genres
-                  ? artist[1].genres.map((a) => <p>{a}</p>)
-                  : null}
+                {artist[1]?.genres && artist[1].genres.length > 0 ? (
+                  artist[1].genres.map((a) => <p>{a}</p>)
+                ) : (
+                  <p>No valid value</p>
+                )}
               </td>
             </tr>
             <tr>
               <td>Loudness</td>
-              <td></td>
+              <td>
+                Loudness values are averaged across the entire track and are
+                useful for comparing relative loudness of tracks. Loud: -11dB.
+                Normal: -14dB. Quiet: -19dB.
+              </td>
               <td
                 onClick={() => clickCell(4)}
                 style={{ backgroundColor: clickState[4] ? selectedColor : "" }}
@@ -320,7 +336,12 @@ const Compare = () => {
             </tr>
             <tr>
               <td>Popularity</td>
-              <td></td>
+              <td>
+                This value represent how popular an artist is relative to other
+                artists on Spotify. On a scale of 0 to 100, 0 means the track
+                has no popularity, and 100 is among the most popular tracks on
+                the platform.
+              </td>
               <td
                 onClick={() => clickCell(6)}
                 style={{ backgroundColor: clickState[6] ? selectedColor : "" }}
@@ -338,7 +359,11 @@ const Compare = () => {
             </tr>
             <tr>
               <td>Tempo</td>
-              <td></td>
+              <td>
+                Tempo is the speed or pace of a given piece and derives directly
+                from the average beat duration. Overall estimated tempo of a
+                track in beats per minute.
+              </td>
               <td
                 onClick={() => clickCell(8)}
                 style={{ backgroundColor: clickState[8] ? selectedColor : "" }}
@@ -356,7 +381,10 @@ const Compare = () => {
             </tr>
             <tr>
               <td>Key</td>
-              <td></td>
+              <td>
+                Integers map to pitches using standard Pitch Class notation.
+                E.g. 0 = C, 1 = C#/Db, 2 = D, and so on.
+              </td>
               <td
                 onClick={() => clickCell(10)}
                 style={{ backgroundColor: clickState[10] ? selectedColor : "" }}
@@ -374,7 +402,10 @@ const Compare = () => {
             </tr>
             <tr>
               <td>Time signature</td>
-              <td></td>
+              <td>
+                The time signature is a notational convention to specify how
+                many beats are in each bar.
+              </td>
               <td
                 onClick={() => clickCell(12)}
                 style={{ backgroundColor: clickState[12] ? selectedColor : "" }}
@@ -396,27 +427,31 @@ const Compare = () => {
             </tr>
           </table>
           <div className="inLine">
-            <button onClick={handleRecommendation} style={{ width: "200px" }}>
+            <button
+              style={{
+                width: "100px",
+                height: "50px",
+              }}
+            >
+              <a href="/main" style={{ textDecoration: "none" }}>
+                Back
+              </a>
+            </button>
+            <button
+              onClick={handleRecommendation}
+              style={{ width: "200px", marginLeft: "auto", marginRight: 0 }}
+            >
               {clickState.every((current) => current === false) ? (
                 "Get Recommendations"
               ) : (
                 <Link
                   to="/recommendation"
+                  style={{ textDecoration: "none" }}
                   state={{ recommendation: { select } }}
                 >
                   Get Recommendations
                 </Link>
               )}
-            </button>
-            <button
-              style={{
-                width: "100px",
-                height: "50px",
-                marginLeft: "auto",
-                marginRight: 0,
-              }}
-            >
-              <a href="/main">Back</a>
             </button>
           </div>
         </div>

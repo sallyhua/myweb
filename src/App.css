@@ -24,16 +24,15 @@ body {
 
 .Logo {
   position: absolute;
-  display: relative;
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  align-content: center;
   background-color: #f0e9e9;
   height: 100%;
   width: 100%;
-  /* text-align: 200px; */
-  /* align-content: center; */
 }
 
 .Logo div {
-  padding-top: 10%;
   padding-left: 100px;
 }
 
@@ -78,8 +77,16 @@ body {
 }
 
 .logout:hover {
-  /* transform: scale(1.2, 1.3); */
-  background-color: #d1dbd5;
+  background-color: #034343;
+}
+
+.logout a {
+  text-decoration: none;
+  color: #034343;
+}
+
+.logout:hover a {
+  color: #f0e9e9;
 }
 
 .MusicDisplay {
@@ -122,10 +129,10 @@ body {
 
 table {
   /* border: 2px solid rgb(16, 48, 176); */
-  margin-left: 2%;
-  margin-top: 3%;
+  /* margin-left: 2%; */
+  margin-top: -10px;
   background-color: white;
-  width: 700px;
+  width: 900px;
   height: 200px;
   border-collapse: collapse;
 }
@@ -215,4 +222,19 @@ button:hover {
 .SearchBar {
   width: 300px;
   height: 30px;
+}
+
+.LogoImage {
+}
+
+.LogoImage img {
+  /* bottom: 50px; */
+  position: relative;
+  border-radius: 25px;
+  box-shadow: 2px 2px 4px #bababa;
+}
+
+.LogoImageAnimation:hover {
+  z-index: 5;
+  animation-delay: 2s;
 }

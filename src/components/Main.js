@@ -41,16 +41,13 @@ const Main = () => {
         "Content-Type": "application/json",
       },
     };
-    {
-      console.log("top");
-    }
+
     await fetch(TOP_ENDPOINT, topParams)
       .then((response) => response.json())
       .then((data) => setTop(data));
   };
 
   const handleSearch = async () => {
-    console.log("search");
     var artistParams = {
       method: "GET",
       headers: {
@@ -90,7 +87,6 @@ const Main = () => {
     // setCheckedState(updatedCheckedState);
     // console.log(event.target.checked);
     if (event.target.checked) {
-      console.log("add");
       setCompareArtist((prevState) => [
         ...prevState,
         event.target.value.split(",")[0],
@@ -112,7 +108,6 @@ const Main = () => {
         )
       );
     }
-    console.log(compareArtist);
   };
 
   const logout = () => {
@@ -199,6 +194,7 @@ const Main = () => {
                 ) : (
                   <Link
                     to="/compare"
+                    style={{ textDecoration: "none" }}
                     state={{ compare: { compareArtist, compareTrack } }}
                   >
                     submit

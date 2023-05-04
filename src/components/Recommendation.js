@@ -109,7 +109,9 @@ const Recommendation = () => {
           Again
         </button>
         <button style={{ width: "100px", height: "50px", marginLeft: "5%" }}>
-          <a href="/main">Back</a>
+          <a href="/main" style={{ textDecoration: "none" }}>
+            Back
+          </a>
         </button>
       </div>
     </div>

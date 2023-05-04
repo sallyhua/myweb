@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 // import "./WebApp.css";
 import "../App.css";
 import Main from "./Main";
-import { Link } from "react-router-dom";
+import analyseImage from "../icons/analyseImage.png";
+import searchImage from "../icons/searchImage.png";
 
 const CLIENT_ID = "829c02a24c1344fd8dc606ac3c0663c5"; // insert your client id here from spotify
 const SPOTIFY_AUTHORIZE_ENDPOINT = "https://accounts.spotify.com/authorize";
@@ -83,6 +84,29 @@ const WebApp = () => {
             <button className="Login" onClick={handleLogin}>
               login to spotify
             </button>
+          </div>
+          <div className="LogoImage">
+            <img
+              src={analyseImage}
+              alt="analyse image"
+              style={{
+                width: "400px",
+                height: "300px",
+                right: "50px",
+                bottom: "50px",
+              }}
+              className="LogoImageAnimation"
+            />
+            <img
+              src={searchImage}
+              alt="search image"
+              style={{
+                width: "400px",
+                height: "300px",
+                right: "150px",
+                top: "100px",
+              }}
+            />
           </div>
         </div>
       )}
