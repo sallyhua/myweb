@@ -20,9 +20,9 @@ const Recommendation = () => {
     handleRecommendation();
   }, [select]);
 
-  const handleRecommendation = () => {
+  const handleRecommendation = async () => {
     console.log(select);
-    axios
+    await axios
       .get(RECOMMENDATION_ENDPOINT, {
         headers: {
           Authorization: "Bearer  " + token,

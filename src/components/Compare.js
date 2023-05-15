@@ -217,6 +217,15 @@ const Compare = () => {
     if (clickState.every((current) => current === false)) {
       alert("Please select at least one element");
       e.preventDefault();
+    } else if (
+      select.seed_artists === null &&
+      select.seed_genres === null &&
+      select.seed_tracks === null
+    ) {
+      alert(
+        "Please select at least one element from track, artists, and genres"
+      );
+      e.preventDefault();
     } else {
       console.log(select);
       setArtist([]);
@@ -441,7 +450,9 @@ const Compare = () => {
               onClick={handleRecommendation}
               style={{ width: "200px", marginLeft: "auto", marginRight: 0 }}
             >
-              {clickState.every((current) => current === false) ? (
+              {select.seed_artists === null &&
+              select.seed_genres === null &&
+              select.seed_tracks === null ? (
                 "Get Recommendations"
               ) : (
                 <Link

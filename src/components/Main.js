@@ -207,7 +207,7 @@ const Main = () => {
                 <InputGroup>
                   <FormControl
                     className="SearchBar"
-                    placeholder="Search For Artist"
+                    placeholder="Search For Music"
                     type="input"
                     onKeyDown={(event) => {
                       if (event.key == "Enter") {
